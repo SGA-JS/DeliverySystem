@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:onClick="buttonSignupClicked"
     tools:context=".SignupActivity">
 
     <!-- Name EditText -->
@@ -13,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:hint="Name"
-        android:inputType="text"/>
+        android:inputType="text" />
 
     <!-- Email EditText -->
     <EditText
@@ -23,7 +24,7 @@
         android:layout_below="@id/editTextName"
         android:layout_marginTop="16dp"
         android:hint="Email"
-        android:inputType="textEmailAddress"/>
+        android:inputType="textEmailAddress" />
 
     <!-- Password EditText -->
     <EditText
@@ -33,7 +34,7 @@
         android:layout_below="@id/editTextEmail"
         android:layout_marginTop="16dp"
         android:hint="Password"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword" />
 
     <!-- Location EditText -->
     <EditText
@@ -43,7 +44,7 @@
         android:layout_below="@id/editTextPassword"
         android:layout_marginTop="16dp"
         android:hint="Location"
-        android:inputType="text"/>
+        android:inputType="text" />
 
     <!-- Sign Up Button -->
     <Button
@@ -52,6 +53,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextLocation"
         android:layout_marginTop="32dp"
-        android:text="Sign Up"/>
+        android:text="Sign Up" />
 
 </RelativeLayout>
