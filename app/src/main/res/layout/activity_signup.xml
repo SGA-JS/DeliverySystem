@@ -4,55 +4,96 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="buttonSignupClicked"
     tools:context=".SignupActivity">
 
-    <!-- Name EditText -->
+
+
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:id="@+id/toolbar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="?attr/colorPrimary"-->
+<!--        android:minHeight="?attr/actionBarSize"-->
+<!--        android:theme="?attr/actionBarTheme">-->
+
+<!--        &lt;!&ndash; Add Sign In text &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Sign Up"-->
+<!--            android:textColor="#FFFFFF"-->
+<!--            android:textSize="18sp"-->
+<!--            android:textStyle="bold" />-->
+
+<!--    </androidx.appcompat.widget.Toolbar>-->
+
+    <!-- Project Logo -->
+    <ImageView
+        android:id="@+id/imageViewLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:onClick="buttonSignupClicked"
+        android:src="@drawable/ic_launcher_background" />
+
+    <!-- Username EditText -->
     <EditText
         android:id="@+id/editTextName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:hint="Name"
-        android:inputType="text" />
+        android:layout_below="@id/imageViewLogo"
+        android:layout_marginTop="32dp"
+        android:hint="Username"
+        android:inputType="text"/>
 
-    <!-- Email EditText -->
     <EditText
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextName"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:hint="Email"
-        android:inputType="textEmailAddress" />
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/editTextPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextEmail"
+        android:layout_marginTop="32dp"
+        android:hint="Phone"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/editTextAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPhone"
+        android:layout_marginTop="32dp"
+        android:hint="Address"
+        android:inputType="text"/>
+
 
     <!-- Password EditText -->
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextEmail"
-        android:layout_marginTop="16dp"
+        android:layout_below="@id/editTextAddress"
+        android:layout_marginTop="32dp"
         android:hint="Password"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"/>
 
-    <!-- Location EditText -->
-    <EditText
-        android:id="@+id/editTextLocation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextPassword"
-        android:layout_marginTop="16dp"
-        android:hint="Location"
-        android:inputType="text" />
 
-    <!-- Sign Up Button -->
+
     <Button
         android:id="@+id/buttonSignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextLocation"
-        android:layout_marginTop="32dp"
-        android:text="Sign Up" />
+        android:layout_below="@id/editTextPassword"
+        android:layout_marginTop="88dp"
+        android:onClick="buttonSignupClicked"
+        android:text="Signup" />
 
 </RelativeLayout>

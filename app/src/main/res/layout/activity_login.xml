@@ -7,6 +7,26 @@
     tools:context=".LoginActivity">
 
 
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
+
+    <!-- Add Sign In text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign In"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
     <!-- Project Logo -->
     <ImageView
         android:id="@+id/imageViewLogo"
@@ -18,12 +38,12 @@
 
     <!-- Username EditText -->
     <EditText
-        android:id="@+id/editTextUsername"
+        android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageViewLogo"
         android:layout_marginTop="32dp"
-        android:hint="Username"
+        android:hint="Email"
         android:inputType="text"/>
 
     <!-- Password EditText -->
@@ -31,7 +51,7 @@
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextUsername"
+        android:layout_below="@id/editTextEmail"
         android:layout_marginTop="16dp"
         android:hint="Password"
         android:inputType="textPassword"/>
@@ -43,6 +63,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextPassword"
         android:layout_marginTop="32dp"
-        android:text="Login"/>
+        android:onClick="buttonLoginClicked"
+        android:text="Login" />
+
+    <Button
+        android:id="@+id/buttonSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPassword"
+        android:layout_marginTop="88dp"
+        android:onClick="buttonSignupClicked"
+        android:text="Signup" />
 
 </RelativeLayout>
