@@ -1,10 +1,8 @@
 package com.example.deliverysystem;
 
 import android.os.Bundle;
-import android.view.View;
 import android.view.Menu;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -27,6 +25,19 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
+        //
+//        RecyclerView recyclerView = findViewById(R.id.recyclerview);
+//
+//        List<Listitem> items = new ArrayList<Listitem>();
+//        items.add(new Listitem("John wick","john,wicke@mail.com","address"));
+//        items.add(new Listitem("John wick","john,wicke@mail.com","address"));
+//        items.add(new Listitem("John wick","john,wicke@mail.com","address"));
+//
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(new MyAdapter(getApplicationContext(),items));
+        //
 
       //  setSupportActionBar(binding.appBarMain.toolbar);
 //        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
