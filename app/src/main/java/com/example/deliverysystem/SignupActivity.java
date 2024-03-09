@@ -35,8 +35,8 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View view) {
                 DBHelper myDB = new DBHelper(SignupActivity.this);
                 myDB.insertCustomer(name_input.getText().toString().trim(),
-                        phone_input.getText().toString().trim(),
                         email_input.getText().toString().trim(),
+                        phone_input.getText().toString().trim(),
                         address_input.getText().toString().trim(),
                         password_input.getText().toString().trim());
 
