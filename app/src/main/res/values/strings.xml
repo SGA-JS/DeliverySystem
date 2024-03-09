@@ -57,5 +57,43 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
 
+    <!-- For Database Usage (Start)-->
+    <!-- Added by Tay on 09/03/2024 -->
+
+    <!-- Table Name-->
+    <string name="DB_TABLE_USER">User</string>
+    <string name="DB_TABLE_TASK">Task</string>
+
+    <!-- Column Name -->
+    <!-- User (Start)-->
+    <string name="DB_COLUMN_USER_NAME">Username</string>
+    <string name="DB_COLUMN_PASSWORD">Password</string>
+    <string name="DB_COLUMN_ROLE">Role</string>
+    <string name="DB_COLUMN_VEHICLE_NUMBER">VehicleNo</string>
+    <!-- User (End)-->
+
+    <!-- Task (Start)-->
+    <string name="DB_COLUMN_CUSTOMER_NAME">CustomerName</string>
+    <string name="DB_COLUMN_CUSTOMER_ADDRESS">CustomerAddress</string>
+    <string name="DB_COLUMN_CUSTOMER_CONTACT">CustomerContact</string>
+    <string name="DB_COLUMN_ASSIGNED_DRIVER">Driver</string>
+    <string name="DB_COLUMN_STATUS">Status</string>
+    <string name="DB_COLUMN_IMAGE_PATH">Image</string>
+    <string name="DB_COLUMN_DELIVERED_TIMESTAMP">DeliveredTime</string>
+    <!-- Task (End)-->
+
+    <!-- Initial Value -->
+    <!-- User (Start)-->
+    <string name="DB_VALUE_ROLE_ADMIN">1</string>
+    <string name="DB_VALUE_ROLE_DRIVER">2</string>
+    <!-- User (End)-->
+
+    <!-- Task (Start)-->
+    <string name="DB_VALUE_STATUS_UNDONE">0</string>
+    <string name="DB_VALUE_STATUS_PROCESSING">1</string>
+    <string name="DB_VALUE_STATUS_COMPLETED">4</string>
+    <!-- Task (End)-->
+
+    <!-- For Database Usage (End)-->
 
 </resources>
