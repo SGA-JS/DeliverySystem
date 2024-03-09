@@ -24,7 +24,7 @@ public class AddtaskFragment extends Fragment {
         binding = FragmentAddtaskBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textAddtask;
+        final TextView textView = binding.address;
         galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
