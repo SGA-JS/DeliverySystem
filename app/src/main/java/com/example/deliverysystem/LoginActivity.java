@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check if email and password are provided
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
             return;
         }
         // Check if the provided credentials are valid
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
             finish(); // Close the LoginActivity
         } else {
             // If credentials are invalid, show error message
-            Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         // Switch to the AnotherActivity
         startActivity(myIntent);
 
-        Toast.makeText(this, "Button clicked", Toast.LENGTH_SHORT).show();
-        Log.i("appinfo", "The user clicked the button");
+        //Toast.makeText(this, "Button clicked", Toast.LENGTH_SHORT).show();
+        Log.i("appinfo", "The user clicked signup button");
     }
 }

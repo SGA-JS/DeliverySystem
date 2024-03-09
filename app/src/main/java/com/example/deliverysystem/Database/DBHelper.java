@@ -1,108 +1,76 @@
 package com.example.deliverysystem.Database;
 
-import static com.example.deliverysystem.Database.DBschema.*;
-import static com.example.deliverysystem.Database.DBschema.AdminEntry.*;
-import static com.example.deliverysystem.Database.DBschema.CustomerEntry.*;
+import static com.example.deliverysystem.Database.DBschema.Task;
+import static com.example.deliverysystem.Database.DBschema.User;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Pair;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 
 public class DBHelper extends SQLiteOpenHelper {
+    private static final String DATABASE_NAME = "MyDatabase.db";
     static int DATABASE_VERSION = 2;
     private Context context;
-
-    private static final String DATABASE_NAME = "MyDatabase.db";
-
-    private static final String SQL_CUSTOMER_TABLE =
-            "CREATE TABLE " + CUSTOMER_TABLE + " (" +
-                    CUSTOMER_COLUMN_ID + " INTEGER PRIMARY KEY," +
-                    CUSTOMER_COLUMN_NAME + " TEXT," +
-                    CUSTOMER_COLUMN_EMAIL + " TEXT," +
-                    CUSTOMER_COLUMN_PHONE + " TEXT," +
-                    CUSTOMER_COLUMN_ADDRESS + " TEXT," +
-                    CUSTOMER_COLUMN_PASSWORD + " TEXT)";
-
-    private static final String SQL_ADMIN_TABLE =
-            "CREATE TABLE " + ADMIN_TABLE + " (" +
-                    CUSTOMER_COLUMN_ID + " INTEGER PRIMARY KEY," +
-                    ADMIN_COLUMN_USERNAME + " TEXT," +
-                    ADMIN_COLUMN_PASSWORD + " TEXT)";
-
-
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
 
+    private static final String SQLITE_CREATE_USER_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + User.USER_TABLE_NAME + " ("
+                    + User.USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + User.USER_USERNAME + " TEXT NOT NULL, "
+                    + User.USER_PASSWORD + " TEXT NOT NULL, "
+                    + User.USER_ROLE + " INTEGER NOT NULL, "
+                    + User.USER_VEHICLE_NO + " TEXT, "
+                    + "CONSTRAINT username_unique UNIQUE (" + User.USER_USERNAME + "));";
+
+    private static final String SQLITE_CREATE_TASK_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Task.TASK_TABLE_NAME + " ("
+                    + Task.TASK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + Task.TASK_CUSTOMER_NAME + " TEXT NOT NULL, "
+                    + Task.TASK_ADDRESS + " TEXT NOT NULL, "
+                    + Task.TASK_CONTACT + " TEXT NOT NULL, "
+                    + Task.TASK_DRIVER + " TEXT NOT NULL, "
+                    + Task.TASK_IMAGE_PATH + " TEXT, "
+                    + Task.TASK_DELIEVRED_TIMESTAMP + " TEXT);";
+
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CUSTOMER_TABLE);
-        db.execSQL(SQL_ADMIN_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS customers");
+        db.execSQL("DROP TABLE IF EXISTS admins");
+        db.execSQL("DROP TABLE IF EXISTS User");
+        db.execSQL(SQLITE_CREATE_USER_TABLE);
+        db.execSQL(SQLITE_CREATE_TASK_TABLE);
     }
-
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Upgrade
-
-        db.execSQL("DROP TABLE IF EXISTS " + CUSTOMER_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + ADMIN_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + User.USER_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Task.TASK_TABLE_NAME);
         onCreate(db);
     }
-    public boolean insertCustomer(String name, String email, String phone, String address, String password) {
+
+    public void insertCustomer(String name, String password, int role, String vehicle) {
         SQLiteDatabase db = getWritableDatabase();
 
-        //Check if the email already exists in the database
-        if (checkDuplicateUser(email)) {
-            // User already exists, return false
-            return false;
-        }
-
-        //row to insert
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CustomerEntry.CUSTOMER_COLUMN_NAME, name);
-        contentValues.put(CustomerEntry.CUSTOMER_COLUMN_EMAIL, email);
-        contentValues.put(CustomerEntry.CUSTOMER_COLUMN_PHONE, phone);
-        contentValues.put(CustomerEntry.CUSTOMER_COLUMN_ADDRESS, address);
-        contentValues.put(CustomerEntry.CUSTOMER_COLUMN_PASSWORD, password);
+        contentValues.put(User.USER_USERNAME, name);
+        contentValues.put(User.USER_PASSWORD, password);
+        contentValues.put(User.USER_ROLE, role);
+        contentValues.put(User.USER_VEHICLE_NO, vehicle);
 
-        long result = db.insert("customers", null, contentValues);
+        long result = db.insert(User.USER_TABLE_NAME, null, contentValues);
         if(result == -1){
-            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
-
+            Toast.makeText(context, "Failed to add user", Toast.LENGTH_SHORT).show();
         }else {
-            Toast.makeText(context, "Added Successfully!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "New user added", Toast.LENGTH_SHORT).show();
         }
-
-        return true;
-    }
-
-    //check duplicate user
-    private boolean checkDuplicateUser(String email) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        // Query the database to check if the email already exists
-        Cursor cursor = db.query(CUSTOMER_TABLE,
-                new String[]{CUSTOMER_COLUMN_EMAIL},
-                CUSTOMER_COLUMN_EMAIL + "=?",
-                new String[]{email},
-                null, null, null);
-
-        // Check if the cursor has any rows (i.e., if the email exists)
-        boolean exists = cursor.getCount() > 0;
-
-        // Close the cursor and return the result
-        cursor.close();
-        return exists;
     }
 
     public boolean updateCustomer (Integer id, String name, String phone, String email, String address, String password) {
@@ -122,81 +90,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public Integer deleteCustomer (Integer id) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        db.delete(ADMIN_TABLE,
-                ADMIN_COLUMN_ID + " = ?" ,  new String[] { Integer.toString(id) });
-
-        // delete contact
-        return db.delete(CUSTOMER_TABLE,
-                CUSTOMER_COLUMN_ID + " = ? ", new String[] { Integer.toString(id) });
-    }
-
-
-    /**
-     * Get the list of all contacts
-     * @return
-     */
-    public ArrayList<Pair<Integer, String>> getAllContacts()
-    {
-        ArrayList<Pair<Integer, String>> array_list = new ArrayList<Pair<Integer, String>>();
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from customers", null );
-        res.moveToFirst();
-
-        while(res.isAfterLast() == false){
-            array_list.add( new Pair(res.getInt(res.getColumnIndex(CUSTOMER_COLUMN_ID) ), res.getString(res.getColumnIndex(CUSTOMER_COLUMN_NAME))) );
-            res.moveToNext();
-        }
-        return array_list;
-    }
-
-
-    public Cursor getData(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        // Cursor res =  db.rawQuery( "select * from contacts where id="+id+"", null );
-
-        Cursor res =  db.rawQuery( "select " + CUSTOMER_TABLE + ".*, sum(" + ADMIN_TABLE + "." + ADMIN_COLUMN_USERNAME + ") " +
-                "from " +  CUSTOMER_TABLE + ", " + ADMIN_TABLE + " " +
-                "where " + CUSTOMER_TABLE + "." + CUSTOMER_COLUMN_ID + "=" + id  + " and " + ADMIN_TABLE +  "." + ADMIN_COLUMN_ID + " = " + id, null );
-
-
-
-        // select contacts.*, sum(donations.amount_donated) from contacts, donations where contacts.id = id  and  donations.contact_id = id
-
-
-        return res;
-    }
-
-
-    /**
-     * Count the number of rows in a table
-     * @return
-     */
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        return  (int) DatabaseUtils.queryNumEntries(db, CUSTOMER_TABLE);
-
-    }
-
-
-    //checkUser
-    public boolean checkUser(String email, String password) {
+    public boolean checkUser(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
         try {
             // Define the columns to be retrieved
-            String[] columns = {CUSTOMER_COLUMN_ID};
+            String[] columns = {User.USER_ID};
             // Define the selection criteria
-            String selection = CUSTOMER_COLUMN_EMAIL + " = ? AND " + CUSTOMER_COLUMN_PASSWORD + " = ?";
+            String selection = User.USER_USERNAME + " = ? AND " + User.USER_PASSWORD + " = ?";
             // Define the selection arguments
-            String[] selectionArgs = {email, password};
+            String[] selectionArgs = {username, password};
             // Query the database
-            cursor = db.query(CUSTOMER_TABLE, columns, selection, selectionArgs, null, null, null);
+            cursor = db.query(User.USER_TABLE_NAME, columns, selection, selectionArgs, null, null, null);
             // Check if any row is returned
             if (cursor != null && cursor.getCount() > 0) {
                 return true; // User exists and credentials match
