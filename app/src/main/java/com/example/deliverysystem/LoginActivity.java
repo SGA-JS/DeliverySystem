@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.example.deliverysystem.Database.DBHelper;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText editTextEmail;
+    private EditText editTextUsername;
     private EditText editTextPassword;
     private DBHelper dbHelper;
 
@@ -23,34 +23,28 @@ public class LoginActivity extends AppCompatActivity {
 
         // Initialize
         dbHelper = new DBHelper(this);
-        editTextEmail = findViewById(R.id.editTextEmail);
+        editTextUsername = findViewById(R.id.editTextUserName);
         editTextPassword = findViewById(R.id.editTextPassword);
 
 
     }
 
     public void buttonLoginClicked(View view) {
-//        Intent myIntent = new Intent(this, MainActivity.class);
-//        // Switch to the AnotherActivity
-//        startActivity(myIntent);
-
-        // Toast.makeText(this, "Button clicked", Toast.LENGTH_SHORT).show();
-        // Log.i("appinfo", "The user clicked the button");
-
-
         // Retrieve the email and password entered by the user
-        String email = editTextEmail.getText().toString().trim();
+        String username = editTextUsername.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
         // Check if email and password are provided
-        if (email.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
             return;
         }
+
         // Check if the provided credentials are valid
-        if (dbHelper.checkUser(email, password)) {
+        if (dbHelper.checkUser(username, password)) {
             // If credentials are valid, switch to MainActivity
             Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+            myIntent.putExtra("username", username);
             startActivity(myIntent);
             finish(); // Close the LoginActivity
         } else {
@@ -64,8 +58,5 @@ public class LoginActivity extends AppCompatActivity {
         Intent myIntent = new Intent(LoginActivity.this, SignupActivity.class);
         // Switch to the AnotherActivity
         startActivity(myIntent);
-
-        //Toast.makeText(this, "Button clicked", Toast.LENGTH_SHORT).show();
-        Log.i("appinfo", "The user clicked signup button");
     }
 }

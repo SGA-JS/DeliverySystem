@@ -38,7 +38,7 @@
 
     <!-- Username EditText -->
     <EditText
-        android:id="@+id/editTextEmail"
+        android:id="@+id/editTextUserName"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_below="@id/imageViewLogo"
@@ -51,7 +51,7 @@
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_below="@id/editTextEmail"
+        android:layout_below="@id/editTextUserName"
         android:layout_marginTop="16dp"
         android:hint="Password"
         android:inputType="textPassword"/>

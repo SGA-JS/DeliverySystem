@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -41,9 +42,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("DROP TABLE IF EXISTS customers");
-        db.execSQL("DROP TABLE IF EXISTS admins");
-        db.execSQL("DROP TABLE IF EXISTS User");
         db.execSQL(SQLITE_CREATE_USER_TABLE);
         db.execSQL(SQLITE_CREATE_TASK_TABLE);
     }
@@ -73,23 +71,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean updateCustomer (Integer id, String name, String phone, String email, String address, String password) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        // Prepare the new values
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("name", name);
-        contentValues.put("phone", phone);
-        contentValues.put("email", email);
-        contentValues.put("street", address);
-        contentValues.put("password", password);
-
-        // run the update query
-        db.update("customers", contentValues, "id = ? ", new String[] { Integer.toString(id) } );
-        return true;
-    }
-
     public boolean checkUser(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
@@ -115,7 +96,33 @@ public class DBHelper extends SQLiteOpenHelper {
         return false; // User does not exist or credentials do not match
     }
 
+    public int getRoleIdByUsername(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        int roleId = -1; // Default value if role ID is not found
 
+        String[] projection = {User.USER_ROLE};
+        String selection = User.USER_USERNAME + " = ?";
+        String[] selectionArgs = {username};
+
+        cursor = db.query(
+                User.USER_TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(User.USER_ROLE);
+                if (columnIndex != -1) { // Check if the column exists
+                    roleId = cursor.getInt(columnIndex);
+                } else {
+                    // Handle column not found error
+                    Log.e("DatabaseHelper", "Column 'USER_ROLE' not found");
+                }
+            }
+            cursor.close();
+        }
+
+        return roleId;
+    }
 
 }
 

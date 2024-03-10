@@ -1,19 +1,19 @@
 package com.example.deliverysystem;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.deliverysystem.Database.DBHelper;
 
 public class SignupActivity extends AppCompatActivity {
-    EditText name_input, password_input, role_input, vehicle_input;
+    EditText name_input, password_input, vehicle_input;
     Button add_button;
     RadioButton btn_Admin, btn_Driver;
 

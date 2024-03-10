@@ -1,8 +1,15 @@
 package com.example.deliverysystem;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.example.deliverysystem.Database.DBHelper;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -18,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
+    private TextView sideBarUsername;
+    private MenuItem listItem, taskItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,29 +35,14 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
-        //
-//        RecyclerView recyclerView = findViewById(R.id.recyclerview);
-//
-//        List<Listitem> items = new ArrayList<Listitem>();
-//        items.add(new Listitem("John wick","john,wicke@mail.com","address"));
-//        items.add(new Listitem("John wick","john,wicke@mail.com","address"));
-//        items.add(new Listitem("John wick","john,wicke@mail.com","address"));
-//
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(new MyAdapter(getApplicationContext(),items));
-        //
-
-      //  setSupportActionBar(binding.appBarMain.toolbar);
-//        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
+        View headerView = navigationView.getHeaderView(0);
+        Menu navMenu = navigationView.getMenu();
+        sideBarUsername = headerView.findViewById(R.id.sideBarUsername);
+        listItem = navMenu.findItem(R.id.nav_list);
+        taskItem = navMenu.findItem(R.id.nav_addtask);
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -58,6 +52,42 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("username")) {
+            String username = intent.getStringExtra("username");
+            if (sideBarUsername != null) {
+                sideBarUsername.setText(username);
+            } else {
+                Log.e("MainActivity", "sideBarUsername is null");
+            }
+
+            DBHelper myDB = new DBHelper(MainActivity.this);
+            int roleId = myDB.getRoleIdByUsername(username);
+            if(roleId >= 0)
+            {
+                if(roleId == ConstantValue.ROLE_ADMIN)
+                {
+                    listItem.setVisible(false);
+                    taskItem.setVisible(true);
+                }
+                else if(roleId == ConstantValue.ROLE_DRIVER)
+                {
+                    listItem.setVisible(true);
+                    taskItem.setVisible(false);
+                }
+                else
+                {
+                    listItem.setVisible(false);
+                    taskItem.setVisible(false);
+                }
+            }
+            else
+            {
+                listItem.setVisible(false);
+                taskItem.setVisible(false);
+            }
+        }
     }
 
     @Override
@@ -73,4 +103,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
 }

@@ -12,11 +12,13 @@
         <item
             android:id="@+id/nav_list"
             android:icon="@drawable/ic_menu_list"
-            android:title="@string/menu_list" />
+            android:title="@string/menu_list"
+            android:visible="false" />
 
         <item
             android:id="@+id/nav_addtask"
             android:icon="@drawable/ic_menu_addtask"
-            android:title="@string/menu_addtask" />
+            android:title="@string/menu_addtask"
+            android:visible="false" />
     </group>
 </menu>
