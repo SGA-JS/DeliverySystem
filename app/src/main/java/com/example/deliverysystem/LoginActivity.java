@@ -3,6 +3,7 @@ package com.example.deliverysystem;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,8 +26,6 @@ public class LoginActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
         editTextUsername = findViewById(R.id.editTextUserName);
         editTextPassword = findViewById(R.id.editTextPassword);
-
-
     }
 
     public void buttonLoginClicked(View view) {

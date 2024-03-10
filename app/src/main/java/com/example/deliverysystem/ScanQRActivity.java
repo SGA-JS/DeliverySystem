@@ -1,6 +1,7 @@
 package com.example.deliverysystem;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -79,7 +80,11 @@ public class ScanQRActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getApplicationContext(), barcodes.valueAt(0).displayValue, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(), barcodes.valueAt(0).displayValue, Toast.LENGTH_SHORT).show();
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("scannedText", barcodes.valueAt(0).displayValue);
+                            setResult(ConstantValue.RESPONSE_CODE_SCAN_OK, resultIntent);
+                            finish();
                         }
                     });
                 }

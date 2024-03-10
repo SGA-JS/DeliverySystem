@@ -47,6 +47,7 @@ dependencies {
     implementation("androidx.annotation:annotation:1.7.1")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.google.android.gms:play-services-vision:20.1.3")
+    implementation ("com.journeyapps:zxing-android-embedded:4.2.0")
 //    implementation("android.recyclerview:recyclerview:1.1.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

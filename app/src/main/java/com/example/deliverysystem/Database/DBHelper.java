@@ -11,6 +11,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class DBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "MyDatabase.db";
@@ -32,16 +35,19 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String SQLITE_CREATE_TASK_TABLE =
             "CREATE TABLE IF NOT EXISTS " + Task.TASK_TABLE_NAME + " ("
-                    + Task.TASK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + Task.TASK_DO_NO + " INTEGER PRIMARY KEY, "
                     + Task.TASK_CUSTOMER_NAME + " TEXT NOT NULL, "
                     + Task.TASK_ADDRESS + " TEXT NOT NULL, "
                     + Task.TASK_CONTACT + " TEXT NOT NULL, "
                     + Task.TASK_DRIVER + " TEXT NOT NULL, "
                     + Task.TASK_IMAGE_PATH + " TEXT, "
-                    + Task.TASK_DELIEVRED_TIMESTAMP + " TEXT);";
+                    + Task.TASK_DELIEVRED_TIMESTAMP + " TEXT,"
+                    + "CONSTRAINT DONo_unique UNIQUE (" + Task.TASK_DO_NO + "));";
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + User.USER_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Task.TASK_TABLE_NAME);
         db.execSQL(SQLITE_CREATE_USER_TABLE);
         db.execSQL(SQLITE_CREATE_TASK_TABLE);
     }
@@ -123,6 +129,55 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return roleId;
     }
+
+    public List<String> getAllVehicleNumbers() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<String> vehicleNumbers = new ArrayList<>();
+
+        // Define the columns you want to retrieve
+        String[] projection = {User.USER_VEHICLE_NO};
+
+        // Query the database
+        Cursor cursor = db.query(
+                User.USER_TABLE_NAME, projection, null, null, null, null, null);
+
+        // Iterate through the cursor and add vehicle numbers to the list
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                int columnIndex = cursor.getColumnIndex(User.USER_VEHICLE_NO);
+                if (columnIndex >= 0) {
+                    // Valid column index, retrieve column value
+                    String vehicleNumber = cursor.getString(columnIndex);
+                    vehicleNumbers.add(vehicleNumber);
+                } else {
+                    // Handle error: Column not found
+                    Log.e("DatabaseHelper", "Column USER_VEHICLE_NO not found in cursor");
+                }
+            }
+        }
+
+        // Close the cursor
+        cursor.close();
+
+        return vehicleNumbers;
+    }
+
+    public long insertTask(int doNo, String customerName, String address, String contact, String driver) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Task.TASK_DO_NO, doNo);
+        values.put(Task.TASK_CUSTOMER_NAME, customerName);
+        values.put(Task.TASK_ADDRESS, address);
+        values.put(Task.TASK_CONTACT, contact);
+        values.put(Task.TASK_DRIVER, driver);
+
+        // Insert the new row, returning the primary key value of the new row
+        long newRowId = db.insert(Task.TASK_TABLE_NAME, null, values);
+        db.close();
+        return newRowId;
+    }
+
+
 
 }
 

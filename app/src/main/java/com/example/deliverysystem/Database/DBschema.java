@@ -14,7 +14,7 @@ public class DBschema {
 
     public static class Task implements BaseColumns {
         public static final String TASK_TABLE_NAME = "Task";
-        public static final String TASK_ID = "taskId";
+        public static final String TASK_DO_NO = "doNo";
         public static final String TASK_CUSTOMER_NAME = "customerName";
         public static final String TASK_ADDRESS = "address";
         public static final String TASK_CONTACT = "contact";
