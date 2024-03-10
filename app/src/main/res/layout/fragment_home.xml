@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteY="704dp" />
 
     <LinearLayout

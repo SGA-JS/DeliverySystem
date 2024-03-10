@@ -1,5 +1,6 @@
 package com.example.deliverysystem.ui.addtask;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.deliverysystem.LoginActivity;
+import com.example.deliverysystem.ScanQRActivity;
+import com.example.deliverysystem.SignupActivity;
+import com.example.deliverysystem.TaskAssignment;
 import com.example.deliverysystem.databinding.FragmentAddtaskBinding;
 
 public class AddtaskFragment extends Fragment {
@@ -28,7 +33,6 @@ public class AddtaskFragment extends Fragment {
         galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
