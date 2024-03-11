@@ -11,6 +11,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.deliverysystem.ConstantValue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     + Task.TASK_ADDRESS + " TEXT NOT NULL, "
                     + Task.TASK_CONTACT + " TEXT NOT NULL, "
                     + Task.TASK_DRIVER + " TEXT NOT NULL, "
+                    + Task.TASK_STATUS + " INTEGER NOT NULL, "
                     + Task.TASK_IMAGE_PATH + " TEXT, "
                     + Task.TASK_DELIEVRED_TIMESTAMP + " TEXT,"
                     + "CONSTRAINT DONo_unique UNIQUE (" + Task.TASK_DO_NO + "));";
@@ -130,6 +133,34 @@ public class DBHelper extends SQLiteOpenHelper {
         return roleId;
     }
 
+    public String getVehicleByUsername(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        String vehicle = null;
+
+        String[] projection = {User.USER_VEHICLE_NO};
+        String selection = User.USER_USERNAME + " = ?";
+        String[] selectionArgs = {username};
+
+        cursor = db.query(
+                User.USER_TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(User.USER_VEHICLE_NO);
+                if (columnIndex != -1) { // Check if the column exists
+                    vehicle = cursor.getString(columnIndex);
+                } else {
+                    // Handle column not found error
+                    Log.e("DatabaseHelper", "Column 'USER_VEHICLE_NO' not found");
+                }
+            }
+            cursor.close();
+        }
+
+        return vehicle;
+    }
+
     public List<String> getAllVehicleNumbers() {
         SQLiteDatabase db = this.getReadableDatabase();
         List<String> vehicleNumbers = new ArrayList<>();
@@ -170,6 +201,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(Task.TASK_ADDRESS, address);
         values.put(Task.TASK_CONTACT, contact);
         values.put(Task.TASK_DRIVER, driver);
+        values.put(Task.TASK_STATUS, ConstantValue.TASK_STATUS_UNDONE);
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(Task.TASK_TABLE_NAME, null, values);
@@ -177,8 +209,107 @@ public class DBHelper extends SQLiteOpenHelper {
         return newRowId;
     }
 
+    public boolean updateTaskProcessing(String doNo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Task.TASK_STATUS, ConstantValue.TASK_STATUS_PROCESSING);
 
+        // Update the status for the specified task ID
+        int rowsAffected = db.update(Task.TASK_TABLE_NAME, values, Task.TASK_DO_NO + " = ?", new String[]{doNo});
+        db.close();
 
+        // Check if any rows were affected by the update
+        return rowsAffected > 0;
+    }
+
+    public boolean completeTask(String doNo, String imagePath, String dateTime) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Task.TASK_STATUS, ConstantValue.TASK_STATUS_COMPLETED);
+        values.put(Task.TASK_IMAGE_PATH, imagePath);
+        values.put(Task.TASK_DELIEVRED_TIMESTAMP, dateTime);
+
+        // Update the status for the specified task ID
+        int rowsAffected = db.update(Task.TASK_TABLE_NAME, values, Task.TASK_DO_NO + " = ?", new String[]{doNo});
+        db.close();
+
+        // Check if any rows were affected by the update
+        return rowsAffected > 0;
+    }
+
+    public int getTaskCountByStatus(int role, String vehicleNumber, int status) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int count = 0;
+
+        // Define the SQL query to count the number of tasks in undone status for a specific driver
+        String query = "SELECT COUNT(*) FROM " + Task.TASK_TABLE_NAME +
+                " WHERE " + Task.TASK_STATUS + " = ?";
+
+        // Initialize selection arguments with undone status
+        List<String> selectionArgsList = new ArrayList<>();
+        selectionArgsList.add(String.valueOf(status));
+
+        // Add additional condition for driver role
+        if (role == ConstantValue.ROLE_DRIVER) {
+            query += " AND " + Task.TASK_DRIVER + " = ?";
+            selectionArgsList.add(vehicleNumber);
+        }
+
+        // Convert selectionArgsList to an array
+        String[] selectionArgs = new String[selectionArgsList.size()];
+        selectionArgsList.toArray(selectionArgs);
+
+        // Execute the query
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+
+        // Retrieve the count from the cursor
+        if (cursor != null) {
+            cursor.moveToFirst();
+            count = cursor.getInt(0);
+            cursor.close();
+        }
+
+        // Close the database connection
+        db.close();
+
+        return count;
+    }
+
+    public int getTotalTaskCountByAccount(int role, String vehicleNumber) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int count = 0;
+
+        // Define the SQL query to count the number of tasks in undone status for a specific driver
+        String query = "SELECT COUNT(*) FROM " + Task.TASK_TABLE_NAME;
+
+        // Initialize selection arguments with undone status
+        List<String> selectionArgsList = new ArrayList<>();
+
+        // Add additional condition for driver role
+        if (role == ConstantValue.ROLE_DRIVER) {
+            query += " WHERE " + Task.TASK_DRIVER + " = ?";
+            selectionArgsList.add(vehicleNumber);
+        }
+
+        // Convert selectionArgsList to an array
+        String[] selectionArgs = new String[selectionArgsList.size()];
+        selectionArgsList.toArray(selectionArgs);
+
+        // Execute the query
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+
+        // Retrieve the count from the cursor
+        if (cursor != null) {
+            cursor.moveToFirst();
+            count = cursor.getInt(0);
+            cursor.close();
+        }
+
+        // Close the database connection
+        db.close();
+
+        return count;
+    }
 }
 
 

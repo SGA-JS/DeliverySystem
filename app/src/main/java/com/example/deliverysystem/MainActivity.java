@@ -1,6 +1,8 @@
 package com.example.deliverysystem;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private TextView sideBarUsername;
     private MenuItem listItem, taskItem;
+    public String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,41 @@ public class MainActivity extends AppCompatActivity {
         listItem = navMenu.findItem(R.id.nav_list);
         taskItem = navMenu.findItem(R.id.nav_addtask);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("Credential", Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("username", "");
+
+        if (username != null || !username.equals("")) {
+            sideBarUsername.setText(username);
+        } else {
+            Log.e("MainActivity", "sideBarUsername is null");
+        }
+
+        DBHelper myDB = new DBHelper(MainActivity.this);
+        int roleId = myDB.getRoleIdByUsername(username);
+        if(roleId >= 0)
+        {
+            if(roleId == ConstantValue.ROLE_ADMIN)
+            {
+                listItem.setVisible(false);
+                taskItem.setVisible(true);
+            }
+            else if(roleId == ConstantValue.ROLE_DRIVER)
+            {
+                listItem.setVisible(true);
+                taskItem.setVisible(false);
+            }
+            else
+            {
+                listItem.setVisible(false);
+                taskItem.setVisible(false);
+            }
+        }
+        else
+        {
+            listItem.setVisible(false);
+            taskItem.setVisible(false);
+        }
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -52,42 +90,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("username")) {
-            String username = intent.getStringExtra("username");
-            if (sideBarUsername != null) {
-                sideBarUsername.setText(username);
-            } else {
-                Log.e("MainActivity", "sideBarUsername is null");
-            }
-
-            DBHelper myDB = new DBHelper(MainActivity.this);
-            int roleId = myDB.getRoleIdByUsername(username);
-            if(roleId >= 0)
-            {
-                if(roleId == ConstantValue.ROLE_ADMIN)
-                {
-                    listItem.setVisible(false);
-                    taskItem.setVisible(true);
-                }
-                else if(roleId == ConstantValue.ROLE_DRIVER)
-                {
-                    listItem.setVisible(true);
-                    taskItem.setVisible(false);
-                }
-                else
-                {
-                    listItem.setVisible(false);
-                    taskItem.setVisible(false);
-                }
-            }
-            else
-            {
-                listItem.setVisible(false);
-                taskItem.setVisible(false);
-            }
-        }
     }
 
     @Override
