@@ -46,34 +46,28 @@ public class MainActivity extends AppCompatActivity {
         listItem = navMenu.findItem(R.id.nav_list);
         taskItem = navMenu.findItem(R.id.nav_addtask);
 
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("username")) {
-            username = intent.getStringExtra("username");
-            if (sideBarUsername != null) {
-                sideBarUsername.setText(username);
-            } else {
-                Log.e("MainActivity", "sideBarUsername is null");
-            }
+        SharedPreferences sharedPreferences = getSharedPreferences("Credential", Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("username", "");
 
-            DBHelper myDB = new DBHelper(MainActivity.this);
-            int roleId = myDB.getRoleIdByUsername(username);
-            if(roleId >= 0)
+        if (username != null || !username.equals("")) {
+            sideBarUsername.setText(username);
+        } else {
+            Log.e("MainActivity", "sideBarUsername is null");
+        }
+
+        DBHelper myDB = new DBHelper(MainActivity.this);
+        int roleId = myDB.getRoleIdByUsername(username);
+        if(roleId >= 0)
+        {
+            if(roleId == ConstantValue.ROLE_ADMIN)
             {
-                if(roleId == ConstantValue.ROLE_ADMIN)
-                {
-                    listItem.setVisible(false);
-                    taskItem.setVisible(true);
-                }
-                else if(roleId == ConstantValue.ROLE_DRIVER)
-                {
-                    listItem.setVisible(true);
-                    taskItem.setVisible(false);
-                }
-                else
-                {
-                    listItem.setVisible(false);
-                    taskItem.setVisible(false);
-                }
+                listItem.setVisible(false);
+                taskItem.setVisible(true);
+            }
+            else if(roleId == ConstantValue.ROLE_DRIVER)
+            {
+                listItem.setVisible(true);
+                taskItem.setVisible(false);
             }
             else
             {
@@ -81,11 +75,11 @@ public class MainActivity extends AppCompatActivity {
                 taskItem.setVisible(false);
             }
         }
-
-        SharedPreferences sharedPreferences = getSharedPreferences("Credential", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("username", username);
-        editor.apply();
+        else
+        {
+            listItem.setVisible(false);
+            taskItem.setVisible(false);
+        }
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.

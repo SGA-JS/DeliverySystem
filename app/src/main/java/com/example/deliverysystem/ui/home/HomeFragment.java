@@ -32,7 +32,7 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        int undoneCount, processingCount, completedCount, totalTask;
+        int undoneCount = 0, processingCount = 0, completedCount = 0, totalTask = 0, progress = 0;
 
         progressUndone = root.findViewById(R.id.undoneProgress);
         progressProcessing = root.findViewById(R.id.processingProgress);
@@ -54,21 +54,6 @@ public class HomeFragment extends Fragment {
                 processingCount = myDB.getTaskCountByStatus(ConstantValue.ROLE_ADMIN, null,ConstantValue.TASK_STATUS_PROCESSING);
                 completedCount = myDB.getTaskCountByStatus(ConstantValue.ROLE_ADMIN, null,ConstantValue.TASK_STATUS_COMPLETED);
                 totalTask = myDB.getTotalTaskCountByAccount(ConstantValue.ROLE_ADMIN, null);
-
-                txtTotal.setText("Total Task: " + String.valueOf(totalTask));
-
-                // Set progress and text for undone tasks
-                progressUndone.setProgress((undoneCount/totalTask)*100);
-                txtUndone.setText("Undone: " + String.valueOf(undoneCount));
-
-                // Set progress and text for processing tasks
-                progressProcessing.setProgress((processingCount/totalTask)*100);
-                txtProcessing.setText("Processing: " + String.valueOf(processingCount));
-
-                // Set progress and text for completed tasks
-                progressCompleted.setProgress((completedCount/totalTask)*100);
-                txtCompleted.setText("Completed: " + String.valueOf(completedCount));
-
             } else if (roleId == ConstantValue.ROLE_DRIVER) {
                 String vehicle = myDB.getVehicleByUsername(username);
 
@@ -77,21 +62,23 @@ public class HomeFragment extends Fragment {
                 processingCount = myDB.getTaskCountByStatus(ConstantValue.ROLE_DRIVER, vehicle, ConstantValue.TASK_STATUS_PROCESSING);
                 completedCount = myDB.getTaskCountByStatus(ConstantValue.ROLE_DRIVER, vehicle, ConstantValue.TASK_STATUS_COMPLETED);
                 totalTask = myDB.getTotalTaskCountByAccount(ConstantValue.ROLE_DRIVER, vehicle);
-
-                txtTotal.setText("Total Task: " + String.valueOf(totalTask));
-
-                // Set progress and text for undone tasks
-                progressUndone.setProgress((undoneCount/totalTask)*100);
-                txtUndone.setText("Undone: " + String.valueOf(undoneCount));
-
-                // Set progress and text for processing tasks
-                progressProcessing.setProgress((processingCount/totalTask)*100);
-                txtProcessing.setText("Processing: " + String.valueOf(processingCount));
-
-                // Set progress and text for completed tasks
-                progressCompleted.setProgress((completedCount/totalTask)*100);
-                txtCompleted.setText("Completed: " + String.valueOf(completedCount));
             }
+            txtTotal.setText("Total Task: " + String.valueOf(totalTask));
+
+            // Set progress and text for undone tasks
+            progress = totalTask == 0 ? 0 : ((undoneCount/totalTask)*100);
+            progressUndone.setProgress(progress);
+            txtUndone.setText("Undone: " + String.valueOf(undoneCount));
+
+            // Set progress and text for processing tasks
+            progress = totalTask == 0 ? 0 : ((processingCount/totalTask)*100);
+            progressProcessing.setProgress(progress);
+            txtProcessing.setText("Processing: " + String.valueOf(processingCount));
+
+            // Set progress and text for completed tasks
+            progress = totalTask == 0 ? 0 : ((completedCount/totalTask)*100);
+            progressCompleted.setProgress(progress);
+            txtCompleted.setText("Completed: " + String.valueOf(completedCount));
         }
 
         final TextView textView = binding.textHome;

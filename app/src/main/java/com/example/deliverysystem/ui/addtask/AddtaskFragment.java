@@ -86,18 +86,18 @@ public class AddtaskFragment extends Fragment {
                 } else {
                     // All required information is provided, proceed with inserting the task
                     result = dbHelper.insertTask(Integer.valueOf(doNumberText), customerNameText, customerAddressText, customerContactText, selectedDriver);
-                }
 
-                if(result < 0){
-                    Toast.makeText(requireContext(), "Failed to add new task", Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(requireContext(), "New task added", Toast.LENGTH_SHORT).show();
-                    // Clear input fields and reset spinner selection
-                    doNumber.setText("");
-                    customerName.setText("");
-                    customerAddress.setText("");
-                    customerContact.setText("");
-                    driverList.setSelection(0);
+                    if(result < 0){
+                        Toast.makeText(requireContext(), "Failed to add new task", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(requireContext(), "New task added", Toast.LENGTH_SHORT).show();
+                        // Clear input fields and reset spinner selection
+                        doNumber.setText("");
+                        customerName.setText("");
+                        customerAddress.setText("");
+                        customerContact.setText("");
+                        driverList.setSelection(0);
+                    }
                 }
             }
         });

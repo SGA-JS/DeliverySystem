@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,15 +46,21 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check if the provided credentials are valid
         if (dbHelper.checkUser(username, password)) {
+            SharedPreferences sharedPreferences = getSharedPreferences("Credential", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("username", username);
+            editor.apply();
+
             // If credentials are valid, switch to MainActivity
             Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-            myIntent.putExtra("username", username);
             startActivity(myIntent);
             finish(); // Close the LoginActivity
         } else {
             // If credentials are invalid, show error message
             Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
         }
+
+
 
     }
 
@@ -66,6 +73,10 @@ public class LoginActivity extends AppCompatActivity {
 
     // logout action
     public void logout(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Credential", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear(); // Clear all data
+        editor.apply(); // Apply the changes
 
         // redirect back to the login screen
         Intent intent = new Intent(context, LoginActivity.class);
