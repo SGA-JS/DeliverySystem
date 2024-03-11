@@ -2,6 +2,8 @@ package com.example.deliverysystem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -58,4 +60,19 @@ public class LoginActivity extends AppCompatActivity {
         // Switch to the AnotherActivity
         startActivity(myIntent);
     }
+
+
+    // logout action
+    public void logout(Context context) {
+
+        // redirect back to the login screen
+        Intent intent = new Intent(context, LoginActivity.class);
+        // Clear the back stack so that the user cannot navigate back to the MainActivity
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+        if (context instanceof Activity) {
+            ((Activity) context).finish();
+        }
+    }
+
 }

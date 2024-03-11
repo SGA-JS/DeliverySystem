@@ -104,4 +104,11 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+
+    public void buttonLogoutClicked(View view) {
+        // Call the logout method in LoginActivity
+        LoginActivity loginActivity = new LoginActivity();
+        loginActivity.logout(this);
+    }
+
 }
