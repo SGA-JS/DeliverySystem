@@ -26,6 +26,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // Initialize
         dbHelper = new DBHelper(this);
+        //SQLiteDatabase db = dbHelper.getWritableDatabase();
+        //dbHelper.onCreate(db);
         editTextUsername = findViewById(R.id.editTextUserName);
         editTextPassword = findViewById(R.id.editTextPassword);
     }

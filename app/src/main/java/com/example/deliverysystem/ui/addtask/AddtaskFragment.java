@@ -70,16 +70,34 @@ public class AddtaskFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 dbHelper = new DBHelper(requireContext());
-                long result = dbHelper.insertTask(Integer.valueOf(doNumber.getText().toString().trim()),
-                        customerName.getText().toString().trim(),
-                        customerAddress.getText().toString().trim(),
-                        customerContact.getText().toString().trim(),
-                        (String) driverList.getSelectedItem());
+                String doNumberText = doNumber.getText().toString().trim();
+                String customerNameText = customerName.getText().toString().trim();
+                String customerAddressText = customerAddress.getText().toString().trim();
+                String customerContactText = customerContact.getText().toString().trim();
+                String selectedDriver = (String) driverList.getSelectedItem();
+                long result = -1;
+
+                if (doNumberText.isEmpty() || customerNameText.isEmpty() || customerAddressText.isEmpty() || customerContactText.isEmpty()) {
+                    // If any of the required fields are empty, show a toast to inform the user
+                    Toast.makeText(getActivity(), "Please rescan if any information is missing.", Toast.LENGTH_SHORT).show();
+                } else if (selectedDriver == null || selectedDriver.equals("")) {
+                    // If no driver is selected, show a toast to inform the user to select a driver
+                    Toast.makeText(getActivity(), "Please select a driver.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // All required information is provided, proceed with inserting the task
+                    result = dbHelper.insertTask(Integer.valueOf(doNumberText), customerNameText, customerAddressText, customerContactText, selectedDriver);
+                }
 
                 if(result < 0){
                     Toast.makeText(requireContext(), "Failed to add new task", Toast.LENGTH_SHORT).show();
                 }else {
                     Toast.makeText(requireContext(), "New task added", Toast.LENGTH_SHORT).show();
+                    // Clear input fields and reset spinner selection
+                    doNumber.setText("");
+                    customerName.setText("");
+                    customerAddress.setText("");
+                    customerContact.setText("");
+                    driverList.setSelection(0);
                 }
             }
         });
@@ -102,6 +120,7 @@ public class AddtaskFragment extends Fragment {
                 customerAddress.setText(elements[2]);
                 customerContact.setText(elements[3]);
             } else {
+                Toast.makeText(getActivity(), "QR code value missing element.", Toast.LENGTH_SHORT).show();
                 Log.e("Scan Error","Scanned QR value: " + scannedText + " | Missing element");
             }
 

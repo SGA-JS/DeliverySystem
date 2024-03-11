@@ -19,6 +19,7 @@ public class DBschema {
         public static final String TASK_ADDRESS = "address";
         public static final String TASK_CONTACT = "contact";
         public static final String TASK_DRIVER = "driver";
+        public static final String TASK_STATUS = "status";
         public static final String TASK_IMAGE_PATH = "image";
         public static final String TASK_DELIEVRED_TIMESTAMP = "deliveredTimestamp";
     }

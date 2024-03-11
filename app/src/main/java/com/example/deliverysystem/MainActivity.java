@@ -1,6 +1,8 @@
 package com.example.deliverysystem;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private TextView sideBarUsername;
     private MenuItem listItem, taskItem;
+    public String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,19 +46,9 @@ public class MainActivity extends AppCompatActivity {
         listItem = navMenu.findItem(R.id.nav_list);
         taskItem = navMenu.findItem(R.id.nav_addtask);
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_list, R.id.nav_addtask)
-                .setOpenableLayout(drawer)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("username")) {
-            String username = intent.getStringExtra("username");
+            username = intent.getStringExtra("username");
             if (sideBarUsername != null) {
                 sideBarUsername.setText(username);
             } else {
@@ -88,6 +81,21 @@ public class MainActivity extends AppCompatActivity {
                 taskItem.setVisible(false);
             }
         }
+
+        SharedPreferences sharedPreferences = getSharedPreferences("Credential", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("username", username);
+        editor.apply();
+
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_list, R.id.nav_addtask)
+                .setOpenableLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
     }
 
     @Override
