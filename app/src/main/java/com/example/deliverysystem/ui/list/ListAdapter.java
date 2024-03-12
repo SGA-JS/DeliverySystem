@@ -1,21 +1,35 @@
 // ListAdapter.java
 package com.example.deliverysystem.ui.list;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.deliverysystem.Database.DBschema.Task;
 import com.example.deliverysystem.R;
 import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
-    private List<String> dataList;
+    private List<Task> taskList;
+    private OnItemClickListener listener;
 
-    public ListAdapter(List<String> dataList) {
-        this.dataList = dataList;
+    public interface OnItemClickListener {
+        void onItemClick(Task task);
+    }
+
+    public ListAdapter(List<Task> taskList, OnItemClickListener listener) {
+        this.taskList = taskList;
+        this.listener = listener;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.taskList = tasks;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -27,13 +41,13 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String data = dataList.get(position);
-        holder.textViewItem.setText(data);
+        Task task = taskList.get(position);
+        holder.bind(task, listener);
     }
 
     @Override
     public int getItemCount() {
-        return dataList.size();
+        return taskList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -42,6 +56,18 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewItem = itemView.findViewById(R.id.textViewItem);
+        }
+
+        public void bind(final Task task, final OnItemClickListener listener) {
+            textViewItem.setText(task.doNo + "\n" + task.custName + "\n"
+                    + task.custAddress + "\n" + task.custContact );
+            textViewItem.setTypeface(textViewItem.getTypeface(), Typeface.BOLD);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(task);
+                }
+            });
         }
     }
 }

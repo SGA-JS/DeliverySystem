@@ -22,6 +22,14 @@ public class DBschema {
         public static final String TASK_STATUS = "status";
         public static final String TASK_IMAGE_PATH = "image";
         public static final String TASK_DELIEVRED_TIMESTAMP = "deliveredTimestamp";
+        public String doNo, custName, custAddress, custContact;
+
+        public Task(String doNo, String custName, String custAddress, String custContact) {
+            this.doNo = doNo;
+            this.custName = custName;
+            this.custAddress = custAddress;
+            this.custContact = custContact;
+        }
     }
 }
 

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:text="Information"
-        android:textSize="20sp"
+        android:textSize="50dp"
         android:textStyle="bold" />
 
     <!-- Horizontal LinearLayout for Icons -->
@@ -27,28 +27,32 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/viewOrderNumber"
+                android:id="@+id/viewDoNo"
                 android:layout_width="match_parent"
                 android:layout_height="90dp"
-                android:text="2309-abc123" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/viewCustomerName"
                 android:layout_width="match_parent"
                 android:layout_height="90dp"
-                android:text="JiaFoo" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/viewCustomerPhone"
                 android:layout_width="match_parent"
                 android:layout_height="90dp"
-                android:text="89089677" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/viewCustomerAddress"
                 android:layout_width="match_parent"
                 android:layout_height="90dp"
-                android:text="123,jurong west 93,68888" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -61,29 +65,32 @@
         android:orientation="horizontal">
 
         <!-- Camera Icon -->
-        <ImageView
-            android:id="@+id/imageViewCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Camera Icon"
-            android:src="@drawable/ic_menu_camera" />
 
         <!-- Start Button -->
+        <ImageView
+            android:id="@+id/btnCamera"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:contentDescription="Camera Icon"
+            android:src="@drawable/ic_menu_camera"
+            android:tint="@color/purple_500" />
+
         <Button
-            android:id="@+id/buttonStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Start" />
+            android:id="@+id/statusButton"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="30dp"
+            android:contentDescription="Status Button" />
 
         <!-- Map Icon -->
         <ImageView
-            android:id="@+id/imageViewMap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:id="@+id/btnGps"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="30dp"
             android:contentDescription="Map Icon"
-            android:src="@drawable/ic_map" />
+            android:src="@drawable/ic_map"
+            android:tint="@color/purple_500"/>
     </LinearLayout>
 
 </LinearLayout>

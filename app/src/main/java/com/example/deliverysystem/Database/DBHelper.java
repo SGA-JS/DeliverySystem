@@ -310,6 +310,47 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return count;
     }
+
+    public List<Task> getTasksByVehicleNumber(String vehicleNumber) {
+        List<Task> taskList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] projection = {
+                Task.TASK_DO_NO,
+                Task.TASK_CUSTOMER_NAME,
+                Task.TASK_ADDRESS,
+                Task.TASK_CONTACT
+        };
+        String selection = Task.TASK_DRIVER + " = ?";
+        String[] selectionArgs = { vehicleNumber };
+
+        Cursor cursor = db.query(
+                Task.TASK_TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                // Extract data from the cursor and create Task objects
+                String doNo = cursor.getString(cursor.getColumnIndexOrThrow(Task.TASK_DO_NO));
+                String customerName = cursor.getString(cursor.getColumnIndexOrThrow(Task.TASK_CUSTOMER_NAME));
+                String customerAdress = cursor.getString(cursor.getColumnIndexOrThrow(Task.TASK_ADDRESS));
+                String customerContact = cursor.getString(cursor.getColumnIndexOrThrow(Task.TASK_CONTACT));
+
+                // Create a Task object and add it to the list
+                Task task = new Task(doNo, customerName, customerAdress, customerContact);
+                taskList.add(task);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return taskList;
+    }
+
 }
 
 

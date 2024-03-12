@@ -1,6 +1,9 @@
 
 package com.example.deliverysystem.ui.list;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,9 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.deliverysystem.CustomerInfoActivity;
 import com.example.deliverysystem.Database.DBHelper;
+import com.example.deliverysystem.Database.DBschema;
 import com.example.deliverysystem.Database.DBschema.Task;
 import com.example.deliverysystem.R;
+import com.example.deliverysystem.ScanQRActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,43 +40,30 @@ public class ListFragment extends Fragment {
         dataList = new ArrayList<>();
 
         // Initialize DBHelper
-        dbHelper = new DBHelper(getContext());
+        dbHelper = new DBHelper(getActivity());
 
-        // Retrieve tasks from database
-        importTasksDatabase();
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("Credential", Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("username", "");
+        String vehicleNumber = dbHelper.getVehicleByUsername(username);
 
         // Set up RecyclerView
         recyclerView = root.findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        listAdapter = new ListAdapter(dataList);
-        recyclerView.setAdapter(listAdapter);
-
-        return root;
-    }
-
-    private void importTasksDatabase() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Task.TASK_TABLE_NAME, null);
-        String taskInfohead = "DO No\t\t\t\t\t" +  "Customer\t\t\t\t\t" + "Contact\t\t\t\t\t";
-       dataList.add(taskInfohead);
-        try {
-            if (cursor.moveToFirst()) {
-                do {
-                    // Extract task data from cursor
-                    int doNo = cursor.getInt(cursor.getColumnIndex(Task.TASK_DO_NO));
-                    String customerName = cursor.getString(cursor.getColumnIndex(Task.TASK_CUSTOMER_NAME));
-                    String contact = cursor.getString(cursor.getColumnIndex(Task.TASK_CONTACT));
-
-
-                    // Create a string representation of the task and add it to the list
-
-                    String taskInfo = doNo +"\t\t\t\t\t" + customerName + "\t\t\t\t\t" + contact + "\t\t\t\t\t" ;
-                    dataList.add(taskInfo);
-                } while (cursor.moveToNext());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listAdapter = new ListAdapter(new ArrayList<>(), new ListAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(Task task) {
+                Intent intent = new Intent(getActivity(), CustomerInfoActivity.class);
+                intent.putExtra("DoNo", task.doNo);
+                intent.putExtra("CustName", task.custName);
+                intent.putExtra("CustAddress", task.custAddress);
+                intent.putExtra("CustContact", task.custContact);
+                startActivity(intent);
             }
-        } finally {
-            cursor.close();
-            db.close();
-        }
+        });
+        List<Task> taskList = dbHelper.getTasksByVehicleNumber(vehicleNumber);
+        listAdapter.setTasks(taskList);
+        recyclerView.setAdapter(listAdapter);
+        return root;
     }
 }
