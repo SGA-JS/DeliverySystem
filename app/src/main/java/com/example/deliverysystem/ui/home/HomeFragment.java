@@ -1,6 +1,7 @@
 package com.example.deliverysystem.ui.home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,12 +12,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.deliverysystem.ConstantValue;
+import com.example.deliverysystem.CustomerInfoActivity;
 import com.example.deliverysystem.Database.DBHelper;
 import com.example.deliverysystem.MainActivity;
 import com.example.deliverysystem.R;
+import com.example.deliverysystem.ScanQRActivity;
 import com.example.deliverysystem.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
@@ -32,7 +36,7 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        int undoneCount = 0, processingCount = 0, completedCount = 0, totalTask = 0, progress = 0;
+        int undoneCount = 0, processingCount = 0, completedCount = 0, totalTask = 0,  progress = 0;
 
         progressUndone = root.findViewById(R.id.undoneProgress);
         progressProcessing = root.findViewById(R.id.processingProgress);
@@ -66,17 +70,17 @@ public class HomeFragment extends Fragment {
             txtTotal.setText("Total Task: " + String.valueOf(totalTask));
 
             // Set progress and text for undone tasks
-            progress = totalTask == 0 ? 0 : ((undoneCount/totalTask)*100);
+            progress = totalTask == 0 ? 0 : (int) Math.ceil(((double) undoneCount / totalTask) * 100);;
             progressUndone.setProgress(progress);
             txtUndone.setText("Undone: " + String.valueOf(undoneCount));
 
             // Set progress and text for processing tasks
-            progress = totalTask == 0 ? 0 : ((processingCount/totalTask)*100);
+            progress = totalTask == 0 ? 0 : (int) Math.ceil(((double) processingCount/totalTask)*100);
             progressProcessing.setProgress(progress);
             txtProcessing.setText("Processing: " + String.valueOf(processingCount));
 
             // Set progress and text for completed tasks
-            progress = totalTask == 0 ? 0 : ((completedCount/totalTask)*100);
+            progress = totalTask == 0 ? 0 : (int) Math.ceil(((double) completedCount/totalTask)*100);
             progressCompleted.setProgress(progress);
             txtCompleted.setText("Completed: " + String.valueOf(completedCount));
         }

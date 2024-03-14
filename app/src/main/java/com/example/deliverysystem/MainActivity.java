@@ -112,5 +112,4 @@ public class MainActivity extends AppCompatActivity {
         LoginActivity loginActivity = new LoginActivity();
         loginActivity.logout(this);
     }
-
 }

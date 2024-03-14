@@ -222,11 +222,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return rowsAffected > 0;
     }
 
-    public boolean completeTask(String doNo, String imagePath, String dateTime) {
+    public boolean completeTask(String doNo, String dateTime) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Task.TASK_STATUS, ConstantValue.TASK_STATUS_COMPLETED);
-        values.put(Task.TASK_IMAGE_PATH, imagePath);
         values.put(Task.TASK_DELIEVRED_TIMESTAMP, dateTime);
 
         // Update the status for the specified task ID
@@ -235,6 +234,47 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // Check if any rows were affected by the update
         return rowsAffected > 0;
+    }
+
+    public boolean updateImage(String doNo, String imagePath) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Task.TASK_IMAGE_PATH, imagePath);
+
+        // Update the status for the specified task ID
+        int rowsAffected = db.update(Task.TASK_TABLE_NAME, values, Task.TASK_DO_NO + " = ?", new String[]{doNo});
+        db.close();
+
+        // Check if any rows were affected by the update
+        return rowsAffected > 0;
+    }
+
+    public int getTaskStatusByDo(String doNo) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        int status = -1;
+
+        String[] projection = {Task.TASK_STATUS};
+        String selection = Task.TASK_DO_NO + " = ?";
+        String[] selectionArgs = {doNo};
+
+        cursor = db.query(
+                Task.TASK_TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(Task.TASK_STATUS);
+                if (columnIndex != -1) { // Check if the column exists
+                    status = cursor.getInt(columnIndex);
+                } else {
+                    // Handle column not found error
+                    Log.e("DatabaseHelper", "getTaskStatusByDo - no status found");
+                }
+            }
+            cursor.close();
+        }
+
+        return status;
     }
 
     public int getTaskCountByStatus(int role, String vehicleNumber, int status) {
@@ -320,8 +360,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 Task.TASK_ADDRESS,
                 Task.TASK_CONTACT
         };
-        String selection = Task.TASK_DRIVER + " = ?";
-        String[] selectionArgs = { vehicleNumber };
+        String selection = Task.TASK_DRIVER + " = ? AND " + Task.TASK_STATUS + " != ?";
+        String[] selectionArgs = { vehicleNumber, String.valueOf(ConstantValue.TASK_STATUS_COMPLETED) };
 
         Cursor cursor = db.query(
                 Task.TASK_TABLE_NAME,

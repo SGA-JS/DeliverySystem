@@ -80,7 +80,8 @@
             android:layout_width="150dp"
             android:layout_height="60dp"
             android:layout_marginStart="30dp"
-            android:contentDescription="Status Button" />
+            android:contentDescription="Status Button"
+            android:onClick="btnStatusClicked" />
 
         <!-- Map Icon -->
         <ImageView
