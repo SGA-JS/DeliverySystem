@@ -1,6 +1,9 @@
 package com.example.deliverysystem;
 
 import androidx.fragment.app.FragmentActivity;
+
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -11,17 +14,27 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.deliverysystem.databinding.ActivityMapsBinding;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-private ActivityMapsBinding binding;
+    private ActivityMapsBinding binding;
+    private String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-     binding = ActivityMapsBinding.inflate(getLayoutInflater());
-     setContentView(binding.getRoot());
+         binding = ActivityMapsBinding.inflate(getLayoutInflater());
+         setContentView(binding.getRoot());
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            address = extras.getString("address");
+        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -41,10 +54,24 @@ private ActivityMapsBinding binding;
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        double latitude, longitude;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        // Use Geocoder to convert address to coordinates
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                latitude = addresses.get(0).getLatitude();
+                longitude = addresses.get(0).getLongitude();
+                // Add a marker in Sydney and move the camera
+                LatLng sydney = new LatLng(latitude, longitude);
+                mMap.addMarker(new MarkerOptions().position(sydney).title("Destination"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

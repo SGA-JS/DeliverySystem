@@ -39,6 +39,9 @@ public class CustomerInfoActivity extends AppCompatActivity {
         btnCamera = findViewById(R.id.btnCamera);
         btnGps = findViewById(R.id.btnGps);
 
+        btnCamera.setEnabled(false);
+        btnGps.setEnabled(false);
+
         // Retrieve data from intent
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -66,7 +69,29 @@ public class CustomerInfoActivity extends AppCompatActivity {
         {
             statusButton.setText("Complete");
             statusButton.setBackgroundColor(Color.parseColor("#0431FD"));
+            btnCamera.setEnabled(true);
+            btnGps.setEnabled(true);
         }
+
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CustomerInfoActivity.this, CameraActivity.class);
+                intent.putExtra("DoNo", doNo);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        btnGps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CustomerInfoActivity.this, MapsActivity.class);
+                intent.putExtra("Address", customerAddress);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     public void btnStatusClicked(View view) {
