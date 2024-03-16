@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +29,7 @@ public class ScanQRActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_scanner);
 
-        surfaceView = findViewById(R.id.surfaceView);
+        surfaceView = findViewById(R.id.qrPreview);
         createCameraSource();
     }
 
@@ -98,13 +97,6 @@ public class ScanQRActivity extends AppCompatActivity {
         if (requestCode == 123 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             try {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
                 cameraSource.start(surfaceView.getHolder());

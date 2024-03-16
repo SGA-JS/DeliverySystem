@@ -1,14 +1,13 @@
 package com.example.deliverysystem;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -18,6 +17,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.deliverysystem.Database.DBHelper;
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,12 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class CameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
+public class CameraActivity extends AppCompatActivity {
 
-    private Camera mCamera;
-    private SurfaceView mSurfaceView;
-    private SurfaceHolder mSurfaceHolder;
-    private Camera.PictureCallback mPictureCallback;
+    private CameraSource cameraSource;
+    private SurfaceView surfaceView;
     String doNo, customerName, customerPhone, customerAddress;
     private DBHelper dbHelper;
 
@@ -48,22 +49,15 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             customerAddress = extras.getString("CustAddress");
         }
 
-        mSurfaceView = findViewById(R.id.surfaceView);
-        mSurfaceHolder = mSurfaceView.getHolder();
-        mSurfaceHolder.addCallback(this);
-
-        // Initialize the picture callback
-        mPictureCallback = (data, camera) -> saveCapturedImage(data);
-
-        // Request camera and storage permissions
-        requestPermissions();
+        surfaceView = findViewById(R.id.cameraPreview);
+        createCameraSource();
 
         // Button click listener for capturing the image
         Button btnCapture = findViewById(R.id.btnCapture);
         btnCapture.setOnClickListener(v -> {
-            if (mCamera != null) {
+            if (cameraSource != null) {
                 // Capture the image
-                mCamera.takePicture(null, null, mPictureCallback);
+                cameraSource.takePicture(null, bytes -> saveCapturedImage(bytes));
             }
         });
     }
@@ -79,52 +73,39 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         startActivity(intent);
     }
 
-    private void initializeCamera() {
-        mCamera = getCameraInstance();
-        if (mCamera != null) {
-            try {
-                mCamera.setPreviewDisplay(mSurfaceHolder);
-                mCamera.startPreview();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error starting camera preview", Toast.LENGTH_SHORT).show();
+    private void createCameraSource() {
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this)
+                .setBarcodeFormats(Barcode.QR_CODE)
+                .build();
+
+        cameraSource = new CameraSource.Builder(this, barcodeDetector)
+                .setRequestedPreviewSize(640, 480)
+                .setAutoFocusEnabled(true)
+                .build();
+
+        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                try {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, 123);
+                        return;
+                    }
+                    cameraSource.start(surfaceView.getHolder());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            Toast.makeText(this, "Failed to open camera", Toast.LENGTH_SHORT).show();
-        }
-    }
 
-    @Override
-    public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        initializeCamera();
-    }
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            }
 
-    @Override
-    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-        // No need to update camera parameters in this implementation
-    }
-
-    @Override
-    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-        releaseCamera();
-    }
-
-    private Camera getCameraInstance() {
-        Camera camera = null;
-        try {
-            camera = Camera.open();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return camera;
-    }
-
-    private void releaseCamera() {
-        if (mCamera != null) {
-            mCamera.stopPreview();
-            mCamera.release();
-            mCamera = null;
-        }
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                cameraSource.stop();
+            }
+        });
     }
 
     private void saveCapturedImage(byte[] data) {
@@ -166,33 +147,18 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         }
     }
 
-    private void requestPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 123);
-        } else {
-            // Permissions already granted, initialize the camera
-            initializeCamera();
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 123) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permissions granted, initialize the camera
-                initializeCamera();
-            } else {
-                // Permissions denied, show a message or handle accordingly
-                Toast.makeText(this, "Camera and storage permissions are required", Toast.LENGTH_SHORT).show();
+        if (requestCode == 123 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            try {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                cameraSource.start(surfaceView.getHolder());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        releaseCamera();
     }
 }

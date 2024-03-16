@@ -97,7 +97,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Add a marker and move the camera
                 LatLng destination = new LatLng(latitude, longitude);
                 mMap.addMarker(new MarkerOptions().position(destination).title("Destination"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destination, 15));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(destination));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, 12.0f));
             }
         } catch (IOException e) {
             e.printStackTrace();
