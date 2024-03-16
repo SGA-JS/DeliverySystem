@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import com.example.deliverysystem.CustomerInfoActivity;
 import com.example.deliverysystem.Database.DBHelper;
 import com.example.deliverysystem.Database.DBschema;
 import com.example.deliverysystem.Database.DBschema.Task;
+import com.example.deliverysystem.MainActivity;
 import com.example.deliverysystem.R;
 import com.example.deliverysystem.ScanQRActivity;
 
@@ -35,6 +38,15 @@ public class ListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_list, container, false);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* disable back key*/) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
 
         // Initialize data list
         dataList = new ArrayList<>();

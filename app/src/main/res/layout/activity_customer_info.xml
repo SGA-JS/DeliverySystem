@@ -72,6 +72,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:contentDescription="Camera Icon"
+            android:onClick="btnCameraClicked"
             android:src="@drawable/ic_menu_camera"
             android:tint="@color/purple_500" />
 
@@ -90,8 +91,9 @@
             android:layout_height="60dp"
             android:layout_marginStart="30dp"
             android:contentDescription="Map Icon"
+            android:onClick="btnGpsClicked"
             android:src="@drawable/ic_map"
-            android:tint="@color/purple_500"/>
+            android:tint="@color/purple_500" />
     </LinearLayout>
 
 </LinearLayout>

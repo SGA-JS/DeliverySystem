@@ -32,14 +32,22 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
     private Camera.PictureCallback mPictureCallback;
-    private String doNo;
+    String doNo, customerName, customerPhone, customerAddress;
     private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        doNo = getIntent().getStringExtra("DoNo");
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            doNo = extras.getString("DoNo");
+            customerName = extras.getString("CustName");
+            customerPhone = extras.getString("CustContact");
+            customerAddress = extras.getString("CustAddress");
+        }
+
         mSurfaceView = findViewById(R.id.surfaceView);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceHolder.addCallback(this);
@@ -58,6 +66,17 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 mCamera.takePicture(null, null, mPictureCallback);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, CustomerInfoActivity.class);
+        intent.putExtra("DoNo", doNo);
+        intent.putExtra("CustName", customerName);
+        intent.putExtra("CustAddress", customerAddress);
+        intent.putExtra("CustContact", customerPhone);
+        startActivity(intent);
     }
 
     private void initializeCamera() {
@@ -127,10 +146,19 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             fos.write(data);
             fos.close();
             Toast.makeText(this, "Image saved: " + filename, Toast.LENGTH_SHORT).show();
-            boolean result = dbHelper.updateImage(doNo, filename);
+            dbHelper = new DBHelper(this);
+            boolean result = dbHelper.updateImage(doNo, photoFile);
             if(!result)
             {
                 Toast.makeText(this, "Failed to update image path", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Intent intent = new Intent(this, CustomerInfoActivity.class);
+                intent.putExtra("DoNo", doNo);
+                intent.putExtra("CustName", customerName);
+                intent.putExtra("CustAddress", customerAddress);
+                intent.putExtra("CustContact", customerPhone);
+                startActivity(intent);
             }
         } catch (Exception error) {
             Log.d("CameraActivity", "File " + filename + " not saved: " + error.getMessage());

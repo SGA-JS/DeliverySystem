@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -49,6 +50,16 @@ public class AddtaskFragment extends Fragment {
 
         final TextView textView = binding.address;
         galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* disable back key*/) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);
+
 
         qrCamera = root.findViewById(R.id.qrCamera);
         doNumber = root.findViewById(R.id.doNumber);

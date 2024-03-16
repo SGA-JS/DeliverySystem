@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -63,35 +64,46 @@ public class CustomerInfoActivity extends AppCompatActivity {
         {
             statusButton.setText("Start");
             statusButton.setBackgroundColor(Color.parseColor("#54FD04"));
-
+            btnCamera.setColorFilter(Color.parseColor("#808080"), PorterDuff.Mode.SRC_IN);
+            btnGps.setColorFilter(Color.parseColor("#808080"), PorterDuff.Mode.SRC_IN);
         }
-        else if (status == ConstantValue.TASK_STATUS_PROCESSING)
-        {
+        else if (status == ConstantValue.TASK_STATUS_PROCESSING) {
             statusButton.setText("Complete");
             statusButton.setBackgroundColor(Color.parseColor("#0431FD"));
+            btnCamera.setColorFilter(Color.parseColor("#CF9FFF"), PorterDuff.Mode.SRC_IN);
+            btnGps.setColorFilter(Color.parseColor("#CF9FFF"), PorterDuff.Mode.SRC_IN);
             btnCamera.setEnabled(true);
             btnGps.setEnabled(true);
         }
+    }
 
-        btnCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CustomerInfoActivity.this, CameraActivity.class);
-                intent.putExtra("DoNo", doNo);
-                startActivity(intent);
-                finish();
-            }
-        });
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 
-        btnGps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CustomerInfoActivity.this, MapsActivity.class);
-                intent.putExtra("Address", customerAddress);
-                startActivity(intent);
-                finish();
-            }
-        });
+    public void btnCameraClicked(View view)
+    {
+        Intent intent = new Intent(CustomerInfoActivity.this, CameraActivity.class);
+        intent.putExtra("DoNo", doNo);
+        intent.putExtra("CustName", customerName);
+        intent.putExtra("CustAddress", customerAddress);
+        intent.putExtra("CustContact", customerPhone);
+        startActivity(intent);
+        finish();
+    }
+
+    public void btnGpsClicked(View view)
+    {
+        Intent intent = new Intent(CustomerInfoActivity.this, MapsActivity.class);
+        intent.putExtra("DoNo", doNo);
+        intent.putExtra("CustName", customerName);
+        intent.putExtra("CustAddress", customerAddress);
+        intent.putExtra("CustContact", customerPhone);
+        startActivity(intent);
+        finish();
     }
 
     public void btnStatusClicked(View view) {
