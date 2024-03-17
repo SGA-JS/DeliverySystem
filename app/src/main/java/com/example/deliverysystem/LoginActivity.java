@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = editTextPassword.getText().toString().trim();
 
         // Check if email and password are provided
-        if (username.isEmpty() || password.isEmpty()) {
+        if (validateInput(username, password)) {
             Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -59,9 +59,14 @@ public class LoginActivity extends AppCompatActivity {
             // If credentials are invalid, show error message
             Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
         }
+    }
 
-
-
+    public boolean validateInput(String username, String password)
+    {
+        if (username.isEmpty() || password.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     public void buttonSignupClicked(View view) {

@@ -128,7 +128,7 @@ public class CameraActivity extends AppCompatActivity {
             fos.close();
             Toast.makeText(this, "Image saved: " + filename, Toast.LENGTH_SHORT).show();
             dbHelper = new DBHelper(this);
-            boolean result = dbHelper.updateImage(doNo, photoFile);
+            boolean result = dbHelper.updateImage(Integer.valueOf(doNo), photoFile);
             if(!result)
             {
                 Toast.makeText(this, "Failed to update image path", Toast.LENGTH_SHORT).show();

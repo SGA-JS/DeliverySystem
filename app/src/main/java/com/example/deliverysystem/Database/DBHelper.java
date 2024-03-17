@@ -63,7 +63,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insertCustomer(String name, String password, int role, String vehicle) {
+    public long insertUser(String name, String password, int role, String vehicle) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -73,11 +73,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(User.USER_VEHICLE_NO, vehicle);
 
         long result = db.insert(User.USER_TABLE_NAME, null, contentValues);
-        if(result == -1){
-            Toast.makeText(context, "Failed to add user", Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(context, "New user added", Toast.LENGTH_SHORT).show();
-        }
+        return result;
     }
 
     public boolean checkUser(String username, String password) {
@@ -209,54 +205,54 @@ public class DBHelper extends SQLiteOpenHelper {
         return newRowId;
     }
 
-    public boolean updateTaskProcessing(String doNo) {
+    public boolean updateTaskProcessing(int doNo) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Task.TASK_STATUS, ConstantValue.TASK_STATUS_PROCESSING);
 
         // Update the status for the specified task ID
-        int rowsAffected = db.update(Task.TASK_TABLE_NAME, values, Task.TASK_DO_NO + " = ?", new String[]{doNo});
+        int rowsAffected = db.update(Task.TASK_TABLE_NAME, values, Task.TASK_DO_NO + " = ?", new String[]{String.valueOf(doNo)});
         db.close();
 
         // Check if any rows were affected by the update
         return rowsAffected > 0;
     }
 
-    public boolean completeTask(String doNo, String dateTime) {
+    public boolean completeTask(int doNo, String dateTime) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Task.TASK_STATUS, ConstantValue.TASK_STATUS_COMPLETED);
         values.put(Task.TASK_DELIEVRED_TIMESTAMP, dateTime);
 
         // Update the status for the specified task ID
-        int rowsAffected = db.update(Task.TASK_TABLE_NAME, values, Task.TASK_DO_NO + " = ?", new String[]{doNo});
+        int rowsAffected = db.update(Task.TASK_TABLE_NAME, values, Task.TASK_DO_NO + " = ?", new String[]{String.valueOf(doNo)});
         db.close();
 
         // Check if any rows were affected by the update
         return rowsAffected > 0;
     }
 
-    public boolean updateImage(String doNo, String imagePath) {
+    public boolean updateImage(int doNo, String imagePath) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Task.TASK_IMAGE_PATH, imagePath);
 
         // Update the status for the specified task ID
-        int rowsAffected = db.update(Task.TASK_TABLE_NAME, values, Task.TASK_DO_NO + " = ?", new String[]{doNo});
+        int rowsAffected = db.update(Task.TASK_TABLE_NAME, values, Task.TASK_DO_NO + " = ?", new String[]{String.valueOf(doNo)});
         db.close();
 
         // Check if any rows were affected by the update
         return rowsAffected > 0;
     }
 
-    public int getTaskStatusByDo(String doNo) {
+    public int getTaskStatusByDo(int doNo) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
         int status = -1;
 
         String[] projection = {Task.TASK_STATUS};
         String selection = Task.TASK_DO_NO + " = ?";
-        String[] selectionArgs = {doNo};
+        String[] selectionArgs = {String.valueOf(doNo)};
 
         cursor = db.query(
                 Task.TASK_TABLE_NAME, projection, selection, selectionArgs, null, null, null);

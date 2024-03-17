@@ -59,7 +59,7 @@ public class CustomerInfoActivity extends AppCompatActivity {
         }
 
         dbHelper = new DBHelper(this);
-        status = dbHelper.getTaskStatusByDo(doNo);
+        status = dbHelper.getTaskStatusByDo(Integer.valueOf(doNo));
         if (status == ConstantValue.TASK_STATUS_UNDONE)
         {
             statusButton.setText("Start");
@@ -110,7 +110,7 @@ public class CustomerInfoActivity extends AppCompatActivity {
         boolean result = true;
         if (status == ConstantValue.TASK_STATUS_UNDONE)
         {
-            result = dbHelper.updateTaskProcessing(doNo);
+            result = dbHelper.updateTaskProcessing(Integer.valueOf(doNo));
             if(!result)
             {
                 Toast.makeText(this, "Failed to update task", Toast.LENGTH_SHORT).show();
@@ -127,7 +127,7 @@ public class CustomerInfoActivity extends AppCompatActivity {
             SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
             String dateText = df.format(new Date());
 
-            result = dbHelper.completeTask(doNo, dateText);
+            result = dbHelper.completeTask(Integer.valueOf(doNo), dateText);
             if(!result)
             {
                 Toast.makeText(this, "Failed to complete task", Toast.LENGTH_SHORT).show();

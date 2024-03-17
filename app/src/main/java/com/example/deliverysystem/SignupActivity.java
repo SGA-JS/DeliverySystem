@@ -1,12 +1,12 @@
 package com.example.deliverysystem;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -47,13 +47,17 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View view) {
                 DBHelper myDB = new DBHelper(SignupActivity.this);
                 int role = btn_Admin.isChecked() ? ConstantValue.ROLE_ADMIN : ConstantValue.ROLE_DRIVER;
-                myDB.insertCustomer(name_input.getText().toString().trim(),
+                long result = myDB.insertUser(name_input.getText().toString().trim(),
                         password_input.getText().toString().trim(), role, vehicle_input.getText().toString().trim());
-
-                //once click the Sign up button - redirect to LoginActivity
-                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                if(result == -1){
+                    Toast.makeText(getBaseContext(), "Failed to add user", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getBaseContext(), "New user added", Toast.LENGTH_SHORT).show();
+                    //once click the Sign up button - redirect to LoginActivity
+                    Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 

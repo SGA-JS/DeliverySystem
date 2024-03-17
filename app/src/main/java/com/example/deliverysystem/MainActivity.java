@@ -28,11 +28,14 @@ import com.example.deliverysystem.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration mAppBarConfiguration;
-    private ActivityMainBinding binding;
-    private TextView sideBarUsername;
-    private MenuItem listItem, taskItem;
-    public String username;
+    public AppBarConfiguration mAppBarConfiguration;
+    public ActivityMainBinding binding;
+    public TextView sideBarUsername;
+    public MenuItem listItem, taskItem;
+    public DrawerLayout drawer;
+    public NavigationView navigationView;
+    public View headerView;
+    public Menu navMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +44,24 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
-        View headerView = navigationView.getHeaderView(0);
-        Menu navMenu = navigationView.getMenu();
+        initializeUI();
+
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_list, R.id.nav_addtask)
+                .setOpenableLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    public void initializeUI() {
+        drawer = binding.drawerLayout;
+        navigationView = binding.navView;
+        headerView = navigationView.getHeaderView(0);
+        navMenu = navigationView.getMenu();
         sideBarUsername = headerView.findViewById(R.id.sideBarUsername);
         listItem = navMenu.findItem(R.id.nav_list);
         taskItem = navMenu.findItem(R.id.nav_addtask);
@@ -52,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("Credential", Context.MODE_PRIVATE);
         String username = sharedPreferences.getString("username", "");
 
-        if (username != null || !username.equals("")) {
+        if (validateUsername(username)) {
             sideBarUsername.setText(username);
         } else {
             Log.e("MainActivity", "sideBarUsername is null");
@@ -83,16 +100,14 @@ public class MainActivity extends AppCompatActivity {
             listItem.setVisible(false);
             taskItem.setVisible(false);
         }
+    }
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_list, R.id.nav_addtask)
-                .setOpenableLayout(drawer)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+    public boolean validateUsername(String username)
+    {
+        if (username != null || !username.equals("")) {
+            return true;
+        }
+        return false;
     }
 
     @Override
