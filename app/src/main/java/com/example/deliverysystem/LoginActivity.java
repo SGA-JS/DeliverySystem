@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = editTextPassword.getText().toString().trim();
 
         // Check if email and password are provided
-        if (validateInput(username, password)) {
+        if (!validateInput(username, password)) {
             Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
             return;
         }

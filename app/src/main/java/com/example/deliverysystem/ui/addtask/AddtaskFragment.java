@@ -88,10 +88,10 @@ public class AddtaskFragment extends Fragment {
                 String selectedDriver = (String) driverList.getSelectedItem();
                 long result = -1;
 
-                if (validateScanInput(doNumberText, customerNameText, customerAddressText, customerContactText)) {
+                if (!validateScanInput(doNumberText, customerNameText, customerAddressText, customerContactText)) {
                     // If any of the required fields are empty, show a toast to inform the user
                     Toast.makeText(getActivity(), "Please rescan if any information is missing.", Toast.LENGTH_SHORT).show();
-                } else if (validateDriver(selectedDriver)) {
+                } else if (!validateDriver(selectedDriver)) {
                     // If no driver is selected, show a toast to inform the user to select a driver
                     Toast.makeText(getActivity(), "Please select a driver.", Toast.LENGTH_SHORT).show();
                 } else {
